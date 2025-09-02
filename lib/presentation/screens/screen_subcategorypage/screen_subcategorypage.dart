@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
+import 'package:gyandarshan/presentation/bloc/fetch_subcategory_bloc/fetch_subcategory_bloc.dart';
 import 'package:gyandarshan/presentation/screens/screen_contentpage/screen_contentpage.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
 
 class ScreenSubcategorypage extends StatefulWidget {
   final String title;
-  const ScreenSubcategorypage({super.key, required this.title});
+  final String categoryId;
+  final String dvisionId;
+  const ScreenSubcategorypage({
+    super.key,
+    required this.title,
+    required this.categoryId,
+    required this.dvisionId,
+  });
 
   @override
   State<ScreenSubcategorypage> createState() => _ScreenSubcategorypageState();
 }
 
 class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<FetchSubcategoryBloc>().add(
+      FetchSubcategoryIntialEvent(
+        divisionId: widget.dvisionId,
+        categoryId: widget.categoryId,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,76 +65,75 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
           child: Container(
             color: const Color.fromARGB(255, 246, 244, 244),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-                childAspectRatio: 1.0,
-              ),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return AnimationConfiguration.staggeredGrid(
-                  position: index,
-                  duration: const Duration(milliseconds: 600),
-                  columnCount: 2,
-                  child: SlideAnimation(
-                    verticalOffset: 50.0,
-                    child: FadeInAnimation(
-                      child: InkWell(
-                        onTap: () {
-                          CustomNavigation.pushWithTransition(
-                            context,
-                            ScreenContentpage(title: widget.title),
-                          );
-                        },
-                        child: _buildGridItem(items[index]),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  final List<GridItem> items = [
-    GridItem(
-      title: 'STANDING ORDERS',
-      assetPath: 'assets/images/standing_orders.png',
-      fallbackIcon: Icons.assignment,
-    ),
-    GridItem(
-      title: 'WORKING TIME TABLE',
-      assetPath: 'assets/images/time_table.png',
-      fallbackIcon: Icons.access_time,
-    ),
-    GridItem(
-      title: 'PREVENTION OF SPAD',
-      assetPath: 'assets/images/prevention_spad.png',
-      fallbackIcon: Icons.block,
-    ),
-    GridItem(
-      title: 'TROUBLE SHOOTING',
-      assetPath: 'assets/images/trouble_shooting.png',
-      fallbackIcon: Icons.build,
-    ),
-    GridItem(
-      title: 'SAFETY DRIVES',
-      assetPath: 'assets/images/safety_drives.png',
-      fallbackIcon: Icons.warning_amber,
-    ),
-    GridItem(
-      title: 'SAFETY CIRCULARS &\nBULLETIN',
-      assetPath: 'assets/images/safety_circulars.png',
-      fallbackIcon: Icons.announcement,
-    ),
-  ];
-  Widget _buildGridItem(GridItem item) {
-    return Container(
+            child: BlocBuilder<FetchSubcategoryBloc, FetchSubcategoryState>(
+              builder: (context, state) {
+                if (state is FetchSubcategoryLoadingState) {
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 1.0,
+                        ),
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return AnimationConfiguration.staggeredGrid(
+                        position: index,
+                        duration: const Duration(milliseconds: 600),
+                        columnCount: 2,
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: SpinKitCircle(
+                                size: 40,
+                                color: Appcolors.kprimarycolor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else if (state is FetchSubcategorySuccessState) {
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 1.0,
+                        ),
+                    itemCount: state.subcategories.length,
+                    itemBuilder: (context, index) {
+                      final item = state.subcategories[index];
+                      return AnimationConfiguration.staggeredGrid(
+                        position: index,
+                        duration: const Duration(milliseconds: 600),
+                        columnCount: 2,
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: InkWell(
+                              onTap: () {
+                                CustomNavigation.pushWithTransition(
+                                  context,
+                                  ScreenContentpage(title: widget.title,divisionId: item.divisionId,categoryId: item.categoryId,subcategoryId: item.subCategoryId,),
+                                );
+                              },
+                              child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -133,25 +154,17 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon/Image
-            Image.asset(
-              item.assetPath,
-              width: 50,
-              height: 50,
-              color: const Color(0xFF424242),
-              errorBuilder: (context, error, stackTrace) {
-                return Icon(
-                  item.fallbackIcon,
-                  size: 50,
-                  color: const Color(0xFF424242),
-                );
-              },
-            ),
+                       Icon(
+  Icons.folder_open,  // or any icon you prefer (e.g., Icons.menu_book)
+  size: 50,
+  color: Color(0xFF424242),
+),
+
             const SizedBox(height: 15),
 
             // Title
             Text(
-              item.title,
+              item.categoryName,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
@@ -163,18 +176,27 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
           ],
         ),
       ),
+    ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else if (state is FetchSubcategoriesErrorState) {
+                  return Center(child: Text(state.message));
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
+
+  
 }
 
-class GridItem {
-  final String title;
-  final String assetPath;
-  final IconData fallbackIcon;
 
-  GridItem({
-    required this.title,
-    required this.assetPath,
-    required this.fallbackIcon,
-  });
-}

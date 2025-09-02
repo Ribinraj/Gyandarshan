@@ -1,21 +1,14 @@
-import 'package:flutter/material.dart';
-
 class Endpoints {
-  static const baseUrl = 'https://qcomplaints.com/api/';
-  static const login = 'consumer/login/mobile';
-  static const verifyotp = 'consumer/login/verify';
-  static const resendOTP = 'consumer/login/resend';
-  static const registerdivison = 'consumer/login/newdivision';
-  static const fetchdevisions = 'consumer/masters/divisions';
-  static const fetchquarters = 'consumer/masters/quarters';
-  static const registerquarters = 'consumer/login/register';
-  static const fetchdashboard = 'consumer/login/dashboard';
-  static const fetchprofile = 'consumer/login/profile';
-  static const fetchcomplaintlists = 'consumer/complaints/list';
-  static const cancelcomplaint = 'consumer/complaints/cancel';
-  static const fetchdepartments = 'consumer/masters/departments';
-  static const fetchcomplaintcategories = 'consumer/masters/categories';
-  static const requestComplaint = 'consumer/complaints/create';
-  static const settoken = 'consumer/login/settoken';
-  static const notifications = 'consumer/login/notifications';
+  static const baseUrl = 'https://gyandarshan.info/api/';
+  static const fetchdevisions = 'divisions';
+  static const login = 'login';
+  static const fetchcategory = 'categories';
+  static const fetchsubcategory = 'sub-categories';
+  static const fetchcontent = 'contents';
+
+  //      static const String CATEGORIES = "https://gyandarshan.info/api/categories";
+  //     static const String SUB_CATEGORIES = "https://gyandarshan.info/api/sub-categories";
+  //  static const String CONTENTS = "https://gyandarshan.info/api/contents";
+  //    static const String DIVISIONS = "https://gyandarshan.info/api/divisions";
+  //    static const String LOGIN = "https://gyandarshan.info/api/login";
 }
