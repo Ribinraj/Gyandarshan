@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
+import 'package:gyandarshan/core/constants.dart';
 import 'package:gyandarshan/presentation/bloc/fetch_content_bloc/fetch_content_bloc.dart';
 import 'package:gyandarshan/presentation/screens/screen_homepage/screenhomepage.dart';
+import 'package:gyandarshan/presentation/screens/screen_pdfviewerpage/screen_pdfpage.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ScreenContentpage extends StatefulWidget {
   final String title;
@@ -74,11 +79,21 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
         ],
         toolbarHeight: 70,
       ),
-      body: Expanded(
-        child: AnimationLimiter(
-          child: Container(
-            color: const Color.fromARGB(255, 246, 244, 244),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      body: AnimationLimiter(
+        child: Container(
+          color: const Color.fromARGB(255, 246, 244, 244),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          child: RefreshIndicator(
+            color: Appcolors.ksecondarycolor,
+            onRefresh: () async {
+              context.read<FetchContentBloc>().add(
+                FetchContentInitialEvent(
+                  divisionId: widget.divisionId,
+                  categoryId: widget.categoryId,
+                  subcategoryId: widget.subcategoryId,
+                ),
+              );
+            },
             child: BlocBuilder<FetchContentBloc, FetchContentState>(
               builder: (context, state) {
                 if (state is FetchContentLoadingState) {
@@ -111,9 +126,16 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                   ),
                                 ],
                               ),
-                              child: SpinKitCircle(
-                                size: 40,
-                                color: Appcolors.kprimarycolor,
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                child: Container(
+                                  margin: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -142,10 +164,26 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                           child: FadeInAnimation(
                             child: InkWell(
                               onTap: () {
-                                // CustomNavigation.pushWithTransition(
-                                //   context,
-                                //   ScreenContentpage(title: widget.title),
-                                // );
+                                log(item.contentAttachment);
+                                if (item.contentAttachment.isNotEmpty &&
+                                    item.contentType.toUpperCase() == 'PDF') {
+                                  CustomNavigation.pushWithTransition(
+                                    context,
+                                    ScreenPdfViewer(
+                                      pdfUrl: item.contentAttachment,
+                                      title: item.contentName,
+                                    ),
+                                  );
+                                } else {
+                                  // Handle other content types or show error
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'No content available to display',
+                                      ),
+                                    ),
+                                  );
+                                }
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -173,17 +211,20 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                                  Icon(
-  Icons.folder_open,  // or any icon you prefer (e.g., Icons.menu_book)
-  size: 50,
-  color: Color(0xFF424242),
-),
+                                      Icon(
+                                        Icons
+                                            .folder_open, // or any icon you prefer (e.g., Icons.menu_book)
+                                        size: 50,
+                                        color: Color(0xFF424242),
+                                      ),
 
-                                      const SizedBox(height: 15),
+                                      ResponsiveSizedBox.height15,
 
                                       // Title
                                       Text(
-                                        item.categoryName,
+                                        item.contentName,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
                                           fontSize: 13,

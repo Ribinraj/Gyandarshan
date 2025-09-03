@@ -10,6 +10,7 @@ import 'package:gyandarshan/presentation/bloc/fetch_division_bloc/fetch_division
 import 'package:gyandarshan/presentation/bloc/fetch_subcategory_bloc/fetch_subcategory_bloc.dart';
 import 'package:gyandarshan/presentation/bloc/login_bloc/login_bloc.dart';
 
+
 import 'package:gyandarshan/presentation/screens/screen_splashpage/screen_splashpage.dart';
 
 void main() {
@@ -46,10 +47,11 @@ class MyApp extends StatelessWidget {
           ),
           fontFamily: 'Helvetica',
           splashColor: Colors.transparent,
+          
           highlightColor: Colors.transparent,
           scaffoldBackgroundColor: Appcolors.kwhitecolor,
         ),
-        home: SplashPage(),
+        home:SplashPage(),
       ),
     );
   }

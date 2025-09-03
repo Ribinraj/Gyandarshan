@@ -13,6 +13,7 @@ import 'package:gyandarshan/widgets/custom_loginbutton.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
 import 'package:gyandarshan/widgets/custom_textfield.dart';
 import 'package:gyandarshan/widgets/customsnackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenLoginpage extends StatefulWidget {
   const ScreenLoginpage({super.key});
@@ -164,8 +165,12 @@ class _ScreenLoginpageState extends State<ScreenLoginpage> {
                       ),
                       SizedBox(height: ResponsiveUtils.hp(6)),
                       BlocConsumer<LoginBloc, LoginState>(
-                        listener: (context, state) {
+                        listener: (context, state) async{
                           if (state is LoginSuccessState) {
+
+                                SharedPreferences preferences = await SharedPreferences.getInstance();
+
+        preferences.setString('DIVISION_ID', selectedDivision!.id);
                             CustomNavigation.pushReplaceWithTransition(
                               context,
                               Screenhomepage(),
