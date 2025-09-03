@@ -77,41 +77,53 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                 ),
                 child: Column(
                   children: [
-                    ResponsiveSizedBox.height5,
-                    Row(
-                      children: [
-                        Spacer(),
-                        IconButton(
-                          onPressed: () {
-                            _showLogoutDialog();
-                          },
-                          icon: Icon(
-                            Icons.logout_outlined,
-                            color: Appcolors.kwhitecolor,
+                    ResponsiveSizedBox.height50,
+                    // Replace your Row with this
+                    SizedBox(
+                      width: double.infinity,
+                      child: Stack(
+                        alignment: Alignment.center, // centers the logo
+                        children: [
+                          // Centered logo
+                          Container(
+                            width: 70,
+                            height: 70,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/images/indianrailways.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
+
+                          // Logout button on the right
+                          Positioned(
+                            right: 0,
+                            child: IconButton(
+                              onPressed: () {
+                                _showLogoutDialog();
+                              },
+                              icon: Icon(
+                                Icons.logout_outlined,
+                                color: Appcolors.kwhitecolor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/indianrailways.png', // your image path
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     ),
+
                     ResponsiveSizedBox.height20,
                     Text(
                       (title ?? "").toUpperCase(),
                       // 'PROPONENT OF TECHNOLOGICAL NEOLOGISM FOR\nRUNNING STAFF OF MYS DIVISION.',
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                       style: TextStyle(
                         fontSize: ResponsiveUtils.hp(1.5),
                         fontWeight: FontWeight.bold,
@@ -119,7 +131,7 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                         height: 1.5,
                       ),
                     ),
-                    SizedBox(height: ResponsiveUtils.hp(6)),
+                    SizedBox(height: ResponsiveUtils.hp(7)),
                   ],
                 ),
               ),
@@ -301,7 +313,7 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                                       CustomNavigation.pushWithTransition(
                                         context,
                                         ScreenSubcategorypage(
-                                          title: item.categoryFullName!,
+                                          title: item.categoryShortName!,
                                           categoryId: item.categoryId!,
                                           dvisionId: item.divisionId!,
                                         ),
@@ -398,7 +410,7 @@ class _ScreenhomepageState extends State<Screenhomepage> {
 
                                                   // Title
                                                   Text(
-                                                    item.categoryFullName!,
+                                                    item.categoryShortName!,
                                                     textAlign: TextAlign.center,
                                                     maxLines: 2,
                                                     overflow:
