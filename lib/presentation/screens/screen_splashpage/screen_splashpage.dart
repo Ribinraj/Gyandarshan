@@ -200,6 +200,7 @@ import 'package:flutter/services.dart';
 import 'package:gyandarshan/presentation/screens/screen_homepage/screenhomepage.dart';
 import 'package:gyandarshan/presentation/screens/screen_loginpage/screen_loginpage.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
+import 'package:gyandarshan/widgets/custom_sharedpreferences.dart';
 
 class AppColors {
   static const kprimarycolor = Color.fromARGB(255, 31, 35, 80);
@@ -256,7 +257,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     _startAnimations();
 
     // Navigate to next page after delay
-    _navigateToNextPage();
+    checkUserlogin(context);
   }
 
   void _startAnimations() {
@@ -269,11 +270,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     });
   }
 
-  void _navigateToNextPage() {
-    Future.delayed(const Duration(seconds: 3), () {
-      CustomNavigation.pushWithTransition(context, ScreenLoginpage());
-    });
-  }
+
 
   @override
   void dispose() {
@@ -281,7 +278,15 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     _scaleController.dispose();
     super.dispose();
   }
-
+  Future<void> checkUserlogin(context) async {
+    final String usertoken = await getUserToken();
+    if (usertoken.isEmpty) {
+      await Future.delayed(const Duration(seconds: 3));
+      CustomNavigation.pushReplaceWithTransition(context, ScreenLoginpage());
+    } else {
+      CustomNavigation.pushReplaceWithTransition(context,Screenhomepage());
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

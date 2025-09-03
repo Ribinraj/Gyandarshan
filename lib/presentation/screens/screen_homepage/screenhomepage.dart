@@ -1,30 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
 import 'package:gyandarshan/core/constants.dart';
 import 'package:gyandarshan/core/responsiveutils.dart';
 import 'package:gyandarshan/presentation/bloc/fetch_category_bloc/fetch_category_bloc.dart';
+import 'package:gyandarshan/presentation/screens/screen_loginpage/screen_loginpage.dart';
 import 'package:gyandarshan/presentation/screens/screen_subcategorypage/screen_subcategorypage.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
+import 'package:gyandarshan/widgets/custom_sharedpreferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Screenhomepage extends StatefulWidget {
-  Screenhomepage({super.key});
+  const Screenhomepage({super.key});
 
   @override
   State<Screenhomepage> createState() => _ScreenhomepageState();
 }
 
 class _ScreenhomepageState extends State<Screenhomepage> {
+  String? id;
+  String? title;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<FetchCategoryBloc>().add(
-      FetchCategoryIintialEvent(divisionId: "1"),
-    );
+    getdatafromprefrenc();
+  }
+
+  Future<void> getdatafromprefrenc() async {
+    final String fetchid = await getdivisionId();
+    final String fetchtitle = await gethomeTitle();
+    setState(() {
+      id = fetchid;
+      title = fetchtitle;
+    });
+    if (id != null) {
+      context.read<FetchCategoryBloc>().add(
+        FetchCategoryIintialEvent(divisionId: id!),
+      );
+    }
   }
 
   @override
@@ -64,7 +82,9 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                       children: [
                         Spacer(),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showLogoutDialog();
+                          },
                           icon: Icon(
                             Icons.logout_outlined,
                             color: Appcolors.kwhitecolor,
@@ -88,8 +108,10 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                     ),
                     ResponsiveSizedBox.height20,
                     Text(
-                      'PROPONENT OF TECHNOLOGICAL NEOLOGISM FOR\nRUNNING STAFF OF MYS DIVISION.',
+                      (title ?? "").toUpperCase(),
+                      // 'PROPONENT OF TECHNOLOGICAL NEOLOGISM FOR\nRUNNING STAFF OF MYS DIVISION.',
                       textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: ResponsiveUtils.hp(1.5),
                         fontWeight: FontWeight.bold,
@@ -186,85 +208,43 @@ class _ScreenhomepageState extends State<Screenhomepage> {
             ],
           ),
 
-          SizedBox(height: ResponsiveUtils.hp(6)),
-          _buildDepartmentTitle(),
+          SizedBox(height: ResponsiveUtils.hp(7)),
+          // _buildDepartmentTitle(),
           Expanded(
             child: AnimationLimiter(
               child: Container(
                 color: const Color.fromARGB(255, 246, 244, 244),
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: BlocBuilder<FetchCategoryBloc, FetchCategoryState>(
-                  builder: (context, state) {
-                    if (state is FetchCategoryLoadingState) {
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 15,
-                              mainAxisSpacing: 15,
-                              childAspectRatio: 1.0,
-                            ),
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          return AnimationConfiguration.staggeredGrid(
-                            position: index,
-                            duration: const Duration(milliseconds: 600),
-                            columnCount: 2,
-                            child: SlideAnimation(
-                              verticalOffset: 50.0,
-                              child: FadeInAnimation(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.08),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: SpinKitCircle(
-                                    size: 40,
-                                    color: Appcolors.kprimarycolor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                child: RefreshIndicator(
+                  color: Appcolors.ksecondarycolor,
+                  onRefresh: () async {
+                    if (id != null) {
+                      context.read<FetchCategoryBloc>().add(
+                        FetchCategoryIintialEvent(divisionId: id!),
                       );
-                    } else if (state is FetchCategorySuccessState) {
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 15,
-                              mainAxisSpacing: 15,
-                              childAspectRatio: 1.0,
-                            ),
-                        itemCount: state.categories.length,
-                        itemBuilder: (context, index) {
-                          final item = state.categories[index];
-                          return AnimationConfiguration.staggeredGrid(
-                            position: index,
-                            duration: const Duration(milliseconds: 600),
-                            columnCount: 2,
-                            child: SlideAnimation(
-                              verticalOffset: 50.0,
-                              child: FadeInAnimation(
-                                child: InkWell(
-                                  onTap: () {
-                                    CustomNavigation.pushWithTransition(
-                                      context,
-                                      ScreenSubcategorypage(
-                                        title: item.categoryFullName!,
-                                        categoryId: item.categoryId!,
-                                        dvisionId: item.divisionId!,
-                                      ),
-                                    );
-                                  },
+                    }
+                  },
+
+                  child: BlocBuilder<FetchCategoryBloc, FetchCategoryState>(
+                    builder: (context, state) {
+                      if (state is FetchCategoryLoadingState) {
+                        return GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 15,
+                                mainAxisSpacing: 15,
+                                childAspectRatio: 1.0,
+                              ),
+                          itemCount: 10,
+                          itemBuilder: (context, index) {
+                            return AnimationConfiguration.staggeredGrid(
+                              position: index,
+                              duration: const Duration(milliseconds: 600),
+                              columnCount: 2,
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -277,103 +257,181 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                                         ),
                                       ],
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        // NEW badge
-                                        Positioned(
-                                          top: 0,
-                                          right: 0,
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                255,
-                                                61,
-                                                201,
-                                                154,
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(15),
-                                                bottomLeft: Radius.circular(12),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              'NEW',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 0.5,
-                                              ),
-                                            ),
+                                    child: Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      child: Container(
+                                        margin: const EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
                                         ),
-
-                                        // Content
-                                        Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Image.network(
-                                                  item.categoryImage!,
-                                                  width: 50,
-                                                  height: 50,
-                                                  fit: BoxFit.contain,
-                                                  errorBuilder:
-                                                      (
-                                                        context,
-                                                        error,
-                                                        stackTrace,
-                                                      ) {
-                                                        return Icon(
-                                                          Icons
-                                                              .image_not_supported_outlined,
-                                                          size: 50,
-                                                          color: Color(
-                                                            0xFF424242,
-                                                          ),
-                                                        );
-                                                      },
-                                                ),
-
-                                                const SizedBox(height: 15),
-
-                                                // Title
-                                                Text(
-                                                  item.categoryFullName!,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xFF212121),
-                                                    height: 1.2,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    } else if (state is FetchCategoryErrorState) {
-                      return Center(child: Text(state.message));
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  },
+                            );
+                          },
+                        );
+                      } else if (state is FetchCategorySuccessState) {
+                        return GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 15,
+                                mainAxisSpacing: 15,
+                                childAspectRatio: 1.0,
+                              ),
+                          itemCount: state.categories.length,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          itemBuilder: (context, index) {
+                            final item = state.categories[index];
+                            return AnimationConfiguration.staggeredGrid(
+                              position: index,
+                              duration: const Duration(milliseconds: 600),
+                              columnCount: 2,
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: InkWell(
+                                    onTap: () {
+                                      CustomNavigation.pushWithTransition(
+                                        context,
+                                        ScreenSubcategorypage(
+                                          title: item.categoryFullName!,
+                                          categoryId: item.categoryId!,
+                                          dvisionId: item.divisionId!,
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                          color: Appcolors.kprimarycolor
+                                              .withAlpha(33),
+                                          width: .5,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.08,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          // NEW badge
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(
+                                                  255,
+                                                  61,
+                                                  201,
+                                                  154,
+                                                ),
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(15),
+                                                  bottomLeft: Radius.circular(
+                                                    12,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                'NEW',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Content
+                                          Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Image.network(
+                                                    item.categoryImage!,
+                                                    width: 50,
+                                                    height: 50,
+                                                    fit: BoxFit.contain,
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Icon(
+                                                            Icons
+                                                                .image_not_supported_outlined,
+                                                            size: 50,
+                                                            color: Color(
+                                                              0xFF424242,
+                                                            ),
+                                                          );
+                                                        },
+                                                  ),
+
+                                                  ResponsiveSizedBox.height15,
+
+                                                  // Title
+                                                  Text(
+                                                    item.categoryFullName!,
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color(0xFF212121),
+                                                      height: 1.2,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else if (state is FetchCategoryErrorState) {
+                        return Center(child: Text(state.message));
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
@@ -383,28 +441,87 @@ class _ScreenhomepageState extends State<Screenhomepage> {
     );
   }
 
-  Widget _buildDepartmentTitle() {
-    return AnimationConfiguration.staggeredList(
-      position: 1,
-      duration: const Duration(milliseconds: 600),
-      child: SlideAnimation(
-        verticalOffset: 30.0,
-        child: FadeInAnimation(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              'Mysuru Division Electrical Department',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Appcolors.kblackcolor,
-              ),
-            ),
+  Future<void> _showLogoutDialog() {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ),
-      ),
+          title: Row(
+            children: [
+              Icon(Icons.logout, color: Appcolors.kredcolor),
+              const SizedBox(width: 8),
+              Text(
+                'Logout',
+                style: TextStyle(
+                  color: Appcolors.kblackcolor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Are you sure you want to logout?',
+            style: TextStyle(color: Appcolors.kblackcolor.withAlpha(204)),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Appcolors.kblackcolor.withAlpha(179)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Appcolors.kredcolor,
+                foregroundColor: Appcolors.kwhitecolor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Logout'),
+              onPressed: () async {
+                try {
+                  final prefs = await SharedPreferences.getInstance();
+
+                  // Clear user token
+                  await prefs.clear();
+
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScreenLoginpage(),
+                      ),
+                      (Route<dynamic> route) =>
+                          false, // remove all previous routes
+                    );
+                  }
+                } catch (e) {
+                  print('Error during logout: $e');
+                  // Fallback navigation
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScreenLoginpage(),
+                      ),
+                      (Route<dynamic> route) =>
+                          false, // remove all previous routes
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -101,6 +101,7 @@ class Apprepo {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
         preferences.setString('USER_TOKEN', responseData["data"]["token"]);
+        preferences.setString('HOME_TITLE', responseData["data"]["title"]);
         return ApiResponse(
           data:null,
           message: responseData['message'] ?? 'Success',

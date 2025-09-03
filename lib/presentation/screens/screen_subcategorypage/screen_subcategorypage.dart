@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
+import 'package:gyandarshan/core/constants.dart';
 import 'package:gyandarshan/presentation/bloc/fetch_subcategory_bloc/fetch_subcategory_bloc.dart';
 import 'package:gyandarshan/presentation/screens/screen_contentpage/screen_contentpage.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ScreenSubcategorypage extends StatefulWidget {
   final String title;
@@ -60,22 +62,30 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
         centerTitle: true,
         toolbarHeight: 70,
       ),
-      body: Expanded(
-        child: AnimationLimiter(
-          child: Container(
-            color: const Color.fromARGB(255, 246, 244, 244),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      body: AnimationLimiter(
+        child: Container(
+          color: const Color.fromARGB(255, 246, 244, 244),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          child: RefreshIndicator(
+            color: Appcolors.ksecondarycolor,
+            onRefresh: () async{
+                  context.read<FetchSubcategoryBloc>().add(
+      FetchSubcategoryIntialEvent(
+        divisionId: widget.dvisionId,
+        categoryId: widget.categoryId,
+      ),
+    );
+            },
             child: BlocBuilder<FetchSubcategoryBloc, FetchSubcategoryState>(
               builder: (context, state) {
                 if (state is FetchSubcategoryLoadingState) {
                   return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 15,
-                          mainAxisSpacing: 15,
-                          childAspectRatio: 1.0,
-                        ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 15,
+                      childAspectRatio: 1.0,
+                    ),
                     itemCount: 10,
                     itemBuilder: (context, index) {
                       return AnimationConfiguration.staggeredGrid(
@@ -97,9 +107,16 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                                   ),
                                 ],
                               ),
-                              child: SpinKitCircle(
-                                size: 40,
-                                color: Appcolors.kprimarycolor,
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                child: Container(
+                                  margin: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -109,13 +126,12 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                   );
                 } else if (state is FetchSubcategorySuccessState) {
                   return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 15,
-                          mainAxisSpacing: 15,
-                          childAspectRatio: 1.0,
-                        ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 15,
+                      childAspectRatio: 1.0,
+                    ),
                     itemCount: state.subcategories.length,
                     itemBuilder: (context, index) {
                       final item = state.subcategories[index];
@@ -130,53 +146,61 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                               onTap: () {
                                 CustomNavigation.pushWithTransition(
                                   context,
-                                  ScreenContentpage(title: widget.title,divisionId: item.divisionId,categoryId: item.categoryId,subcategoryId: item.subCategoryId,),
+                                  ScreenContentpage(
+                                    title: item.categoryName,
+                                    divisionId: item.divisionId,
+                                    categoryId: item.categoryId,
+                                    subcategoryId: item.subCategoryId,
+                                  ),
                                 );
                               },
                               child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          width: .3,
-          color: const Color.fromARGB(255, 165, 219, 130),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-                       Icon(
-  Icons.folder_open,  // or any icon you prefer (e.g., Icons.menu_book)
-  size: 50,
-  color: Color(0xFF424242),
-),
-
-            const SizedBox(height: 15),
-
-            // Title
-            Text(
-              item.categoryName,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF212121),
-                height: 1.2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    width: .3,
+                                    color: Appcolors.kprimarycolor.withAlpha(33),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons
+                                            .folder_open, // or any icon you prefer (e.g., Icons.menu_book)
+                                        size: 50,
+                                        color: Color(0xFF424242),
+                                      ),
+            
+                                      ResponsiveSizedBox.height10,
+            
+                                      // Title
+                                      Text(
+                                        item.categoryName,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF212121),
+                                          height: 1.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -195,8 +219,4 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
       ),
     );
   }
-
-  
 }
-
-
