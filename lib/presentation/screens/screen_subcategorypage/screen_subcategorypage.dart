@@ -68,24 +68,25 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
           child: RefreshIndicator(
             color: Appcolors.ksecondarycolor,
-            onRefresh: () async{
-                  context.read<FetchSubcategoryBloc>().add(
-      FetchSubcategoryIntialEvent(
-        divisionId: widget.dvisionId,
-        categoryId: widget.categoryId,
-      ),
-    );
+            onRefresh: () async {
+              context.read<FetchSubcategoryBloc>().add(
+                FetchSubcategoryIntialEvent(
+                  divisionId: widget.dvisionId,
+                  categoryId: widget.categoryId,
+                ),
+              );
             },
             child: BlocBuilder<FetchSubcategoryBloc, FetchSubcategoryState>(
               builder: (context, state) {
                 if (state is FetchSubcategoryLoadingState) {
                   return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 15,
-                      childAspectRatio: 1.0,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 1.0,
+                        ),
                     itemCount: 10,
                     itemBuilder: (context, index) {
                       return AnimationConfiguration.staggeredGrid(
@@ -126,12 +127,13 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                   );
                 } else if (state is FetchSubcategorySuccessState) {
                   return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 15,
-                      childAspectRatio: 1.0,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 1.0,
+                        ),
                     itemCount: state.subcategories.length,
                     itemBuilder: (context, index) {
                       final item = state.subcategories[index];
@@ -147,7 +149,7 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                                 CustomNavigation.pushWithTransition(
                                   context,
                                   ScreenContentpage(
-                                    title: item.categoryName,
+                                    title: item.groupName,
                                     divisionId: item.divisionId,
                                     categoryId: item.categoryId,
                                     subcategoryId: item.subCategoryId,
@@ -160,7 +162,9 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
                                     width: .3,
-                                    color: Appcolors.kprimarycolor.withAlpha(33),
+                                    color: Appcolors.kprimarycolor.withAlpha(
+                                      33,
+                                    ),
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -175,18 +179,18 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(
-                                        Icons
-                                            .folder_open, // or any icon you prefer (e.g., Icons.menu_book)
-                                        size: 50,
-                                        color: Color(0xFF424242),
+                                      Image.asset(
+                                        'assets/images/6330-removebg-preview.png',
+                                        width: 90,
+                                        height: 90,
+                                        fit: BoxFit.contain,
                                       ),
-            
+
                                       ResponsiveSizedBox.height10,
-            
+
                                       // Title
                                       Text(
-                                        item.categoryName,
+                                        item.groupName,
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,

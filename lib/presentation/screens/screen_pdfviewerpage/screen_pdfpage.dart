@@ -339,6 +339,7 @@ class _ScreenPdfViewerState extends State<ScreenPdfViewer> {
                     controller: _pdfViewerController,
                     canShowPaginationDialog: false,
                     enableDoubleTapZooming: true,
+                    canShowScrollHead: false,
                     onDocumentLoaded: (PdfDocumentLoadedDetails details) {
                       setState(() {
                         _totalPages = details.document.pages.count;

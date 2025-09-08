@@ -191,11 +191,8 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
                                     width: .3,
-                                    color: const Color.fromARGB(
-                                      255,
-                                      165,
-                                      219,
-                                      130,
+                                    color: Appcolors.kprimarycolor.withAlpha(
+                                      33,
                                     ),
                                   ),
                                   boxShadow: [
@@ -211,11 +208,11 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(
-                                        Icons
-                                            .folder_open, // or any icon you prefer (e.g., Icons.menu_book)
-                                        size: 50,
-                                        color: Color(0xFF424242),
+                                      Image.asset(
+                                        'assets/images/1699-removebg-preview.png',
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.contain,
                                       ),
 
                                       ResponsiveSizedBox.height15,
