@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
 import 'package:gyandarshan/core/constants.dart';
+import 'package:gyandarshan/core/responsiveutils.dart';
 import 'package:gyandarshan/presentation/bloc/fetch_content_bloc/fetch_content_bloc.dart';
 import 'package:gyandarshan/presentation/screens/screen_homepage/screenhomepage.dart';
 import 'package:gyandarshan/presentation/screens/screen_pdfviewerpage/screen_pdfpage.dart';
@@ -100,7 +101,7 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                   return GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                          crossAxisCount: 3,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
                           childAspectRatio: 1.0,
@@ -147,10 +148,10 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                   return GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                          crossAxisCount: 3,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
-                          childAspectRatio: 1.0,
+                          childAspectRatio: .9,
                         ),
                     itemCount: state.contents.length,
                     itemBuilder: (context, index) {
@@ -158,7 +159,7 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                       return AnimationConfiguration.staggeredGrid(
                         position: index,
                         duration: const Duration(milliseconds: 600),
-                        columnCount: 2,
+                        columnCount: 3,
                         child: SlideAnimation(
                           verticalOffset: 50.0,
                           child: FadeInAnimation(
@@ -188,7 +189,7 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                     width: .3,
                                     color: Appcolors.kprimarycolor.withAlpha(
@@ -204,18 +205,18 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                   ],
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.all(10),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Image.asset(
                                         'assets/images/1699-removebg-preview.png',
-                                        width: 80,
-                                        height: 80,
+                                        width: ResponsiveUtils.wp(15),
+                                        // height: 80,
                                         fit: BoxFit.contain,
                                       ),
 
-                                      ResponsiveSizedBox.height15,
+                                      ResponsiveSizedBox.height5,
 
                                       // Title
                                       Text(
@@ -223,8 +224,8 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 13,
+                                        style:  TextStyle(
+                                          fontSize: ResponsiveUtils.wp(2.5),
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF212121),
                                           height: 1.2,

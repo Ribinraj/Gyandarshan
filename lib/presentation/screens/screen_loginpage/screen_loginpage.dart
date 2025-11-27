@@ -52,7 +52,7 @@ class _ScreenLoginpageState extends State<ScreenLoginpage> {
             children: [
               // Top image
               Container(
-                height: ResponsiveUtils.hp(40),
+                height: ResponsiveUtils.hp(43),
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
@@ -85,14 +85,14 @@ class _ScreenLoginpageState extends State<ScreenLoginpage> {
 
               // Stack to overlap the white container
               Transform.translate(
-                offset: const Offset(0, -40),
+                offset: Offset(0, ResponsiveUtils.hp(-8)),
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
+                  padding: EdgeInsets.all(ResponsiveUtils.wp(5)),
+                  decoration:  BoxDecoration(
                     color: Appcolors.kwhitecolor,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
+                      topLeft: Radius.circular(ResponsiveUtils.wp(14)),
                       topRight: Radius.circular(0),
                     ),
                   ),
@@ -102,7 +102,7 @@ class _ScreenLoginpageState extends State<ScreenLoginpage> {
                       ResponsiveSizedBox.height50,
                       TextStyles.headline(text: 'Welcome back'),
                       ResponsiveSizedBox.height5,
-                      Text("Login to your account"),
+                      ResponsiveText( "Login to your account",color: Appcolors.kblackcolor,sizeFactor: .7,),
                       ResponsiveSizedBox.height50,
 
                       BlocBuilder<FetchDivisionBloc, FetchDivisionState>(
@@ -220,9 +220,10 @@ class _ScreenLoginpageState extends State<ScreenLoginpage> {
                           );
                         },
                       ),
-                      SizedBox(height: ResponsiveUtils.hp(7)),
-                      TextStyles.caption(
-                        text: 'Designed & Developed by Crisant Technologies',
+                      SizedBox(height: ResponsiveUtils.hp(5)),
+                      ResponsiveText(
+                         'Designed & Developed by Crisant Technologies',
+                         sizeFactor: .55,
                       ),
                     ],
                   ),
