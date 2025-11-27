@@ -77,7 +77,7 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                 ),
                 child: Column(
                   children: [
-                    ResponsiveSizedBox.height50,
+                    ResponsiveSizedBox.height40,
                     // Replace your Row with this
                     SizedBox(
                       width: double.infinity,
@@ -86,8 +86,8 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                         children: [
                           // Centered logo
                           Container(
-                            width: 70,
-                            height: 70,
+                            width: ResponsiveUtils.wp(25),
+                            //height: 70,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -110,6 +110,7 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                               icon: Icon(
                                 Icons.logout_outlined,
                                 color: Appcolors.kwhitecolor,
+                                size: ResponsiveUtils.wp(8),
                               ),
                             ),
                           ),
@@ -131,14 +132,28 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                         height: 1.5,
                       ),
                     ),
-                    SizedBox(height: ResponsiveUtils.hp(7)),
+                    ResponsiveSizedBox.height10,
+                    Text(
+                      'Designed & Developed by Crisant Technologies',
+                      // 'PROPONENT OF TECHNOLOGICAL NEOLOGISM FOR\nRUNNING STAFF OF MYS DIVISION.',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: ResponsiveUtils.hp(1),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                        height: 1.5,
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveUtils.hp(8)),
                   ],
                 ),
               ),
 
               // Gyandarshan card (overlapping)
               Positioned(
-                bottom: -50,
+                bottom: -60,
                 left: 20,
                 right: 20,
                 child: AnimationConfiguration.staggeredList(
@@ -148,7 +163,10 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                     verticalOffset: 30.0,
                     child: FadeInAnimation(
                       child: Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.symmetric(
+                          vertical: ResponsiveUtils.hp(4),
+                          horizontal: ResponsiveUtils.wp(5),
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
@@ -165,8 +183,8 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                             // Book icon
                             Image.asset(
                               'assets/images/asdas.png',
-                              width: 60,
-                              height: 60,
+                              width: ResponsiveUtils.wp(17),
+                              // height: 60,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   width: 60,
@@ -220,7 +238,7 @@ class _ScreenhomepageState extends State<Screenhomepage> {
             ],
           ),
 
-          SizedBox(height: ResponsiveUtils.hp(7)),
+          SizedBox(height: ResponsiveUtils.hp(9)),
           // _buildDepartmentTitle(),
           Expanded(
             child: AnimationLimiter(
@@ -236,202 +254,230 @@ class _ScreenhomepageState extends State<Screenhomepage> {
                       );
                     }
                   },
-child:  BlocConsumer<FetchCategoryBloc, FetchCategoryState>(
-  listener: (context, state) async {
-    if (state is FetchCategoryErrorState) {
-      if (state.message == "Expired token") {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+                  child: BlocConsumer<FetchCategoryBloc, FetchCategoryState>(
+                    listener: (context, state) async {
+                      if (state is FetchCategoryErrorState) {
+                        if (state.message == "Expired token") {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.clear();
 
-        if (context.mounted) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ScreenLoginpage(),
-            ),
-            (Route<dynamic> route) => false,
-          );
-        }
-      }
-    }
-  },
-  builder: (context, state) {
-    if (state is FetchCategoryLoadingState) {
-      return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
-          childAspectRatio: 1.0,
-        ),
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return AnimationConfiguration.staggeredGrid(
-            position: index,
-            duration: const Duration(milliseconds: 600),
-            columnCount: 2,
-            child: SlideAnimation(
-              verticalOffset: 50.0,
-              child: FadeInAnimation(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Shimmer.fromColors(
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100,
-                    child: Container(
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    } else if (state is FetchCategorySuccessState) {
-      return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
-          childAspectRatio: 1.0,
-        ),
-        itemCount: state.categories.length,
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        itemBuilder: (context, index) {
-          final item = state.categories[index];
-          return AnimationConfiguration.staggeredGrid(
-            position: index,
-            duration: const Duration(milliseconds: 600),
-            columnCount: 2,
-            child: SlideAnimation(
-              verticalOffset: 50.0,
-              child: FadeInAnimation(
-                child: InkWell(
-                  onTap: () {
-                    CustomNavigation.pushWithTransition(
-                      context,
-                      ScreenSubcategorypage(
-                        title: item.categoryShortName!,
-                        categoryId: item.categoryId!,
-                        dvisionId: item.divisionId!,
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Appcolors.kprimarycolor.withAlpha(33),
-                        width: .5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        // NEW badge
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Color.fromARGB(255, 61, 201, 154),
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(12),
+                          if (context.mounted) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ScreenLoginpage(),
                               ),
-                            ),
-                            child: const Text(
-                              'NEW',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
+                              (Route<dynamic> route) => false,
+                            );
+                          }
+                        }
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is FetchCategoryLoadingState) {
+                        return GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 15,
+                                mainAxisSpacing: 15,
+                                childAspectRatio: 1.0,
                               ),
-                            ),
-                          ),
-                        ),
-
-                        // Content
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.network(
-                                  item.categoryImage!,
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(
-                                      Icons.image_not_supported_outlined,
-                                      size: 50,
-                                      color: Color(0xFF424242),
-                                    );
-                                  },
-                                ),
-                                ResponsiveSizedBox.height15,
-                                Text(
-                                  item.categoryShortName!,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF212121),
-                                    height: 1.2,
+                          itemCount: 10,
+                          itemBuilder: (context, index) {
+                            return AnimationConfiguration.staggeredGrid(
+                              position: index,
+                              duration: const Duration(milliseconds: 600),
+                              columnCount: 2,
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      child: Container(
+                                        margin: const EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                              ),
+                            );
+                          },
+                        );
+                      } else if (state is FetchCategorySuccessState) {
+                        return GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 15,
+                                mainAxisSpacing: 15,
+                                childAspectRatio: .9,
+                              ),
+                          itemCount: state.categories.length,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          itemBuilder: (context, index) {
+                            final item = state.categories[index];
+                            return AnimationConfiguration.staggeredGrid(
+                              position: index,
+                              duration: const Duration(milliseconds: 600),
+                              columnCount: 2,
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: InkWell(
+                                    onTap: () {
+                                      CustomNavigation.pushWithTransition(
+                                        context,
+                                        ScreenSubcategorypage(
+                                          title: item.categoryShortName!,
+                                          categoryId: item.categoryId!,
+                                          dvisionId: item.divisionId!,
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                          color: Appcolors.kprimarycolor
+                                              .withAlpha(33),
+                                          width: .5,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.08,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          // NEW badge
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
+                                              decoration: const BoxDecoration(
+                                                color: Color.fromARGB(
+                                                  255,
+                                                  61,
+                                                  201,
+                                                  154,
+                                                ),
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(15),
+                                                  bottomLeft: Radius.circular(
+                                                    12,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                'NEW',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Content
+                                          Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Image.network(
+                                                    item.categoryImage!,
+                                                    width: ResponsiveUtils.wp(
+                                                      8,
+                                                    ),
+                                                    //height: 50,
+                                                    fit: BoxFit.contain,
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return const Icon(
+                                                            Icons
+                                                                .image_not_supported_outlined,
+                                                            size: 50,
+                                                            color: Color(
+                                                              0xFF424242,
+                                                            ),
+                                                          );
+                                                        },
+                                                  ),
+                                                  ResponsiveSizedBox.height15,
+                                                  Text(
+                                                    item.categoryShortName!,
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color(0xFF212121),
+                                                      height: 1.2,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else if (state is FetchCategoryErrorState) {
+                        // Other errors (not token expired)
+                        return Center(child: Text(state.message));
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
                   ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    } else if (state is FetchCategoryErrorState) {
-      // Other errors (not token expired)
-      return Center(child: Text(state.message));
-    } else {
-      return const SizedBox.shrink();
-    }
-  },
-),
 
                   // child: BlocBuilder<FetchCategoryBloc, FetchCategoryState>(
                   //   builder: (context, state) {

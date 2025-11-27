@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
 import 'package:gyandarshan/core/constants.dart';
+import 'package:gyandarshan/core/responsiveutils.dart';
 import 'package:gyandarshan/presentation/bloc/fetch_content_bloc/fetch_content_bloc.dart';
 import 'package:gyandarshan/presentation/screens/screen_homepage/screenhomepage.dart';
 import 'package:gyandarshan/presentation/screens/screen_pdfviewerpage/screen_pdfpage.dart';
@@ -150,7 +151,7 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
-                          childAspectRatio: 1.0,
+                          childAspectRatio: .9,
                         ),
                     itemCount: state.contents.length,
                     itemBuilder: (context, index) {
@@ -210,8 +211,8 @@ class _ScreenSubcategorypageState extends State<ScreenContentpage> {
                                     children: [
                                       Image.asset(
                                         'assets/images/1699-removebg-preview.png',
-                                        width: 80,
-                                        height: 80,
+                                        width: ResponsiveUtils.wp(25),
+                                        // height: 80,
                                         fit: BoxFit.contain,
                                       ),
 

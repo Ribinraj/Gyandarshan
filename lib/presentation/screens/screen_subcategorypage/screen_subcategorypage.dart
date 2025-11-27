@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gyandarshan/core/colors.dart';
 import 'package:gyandarshan/core/constants.dart';
+import 'package:gyandarshan/core/responsiveutils.dart';
 import 'package:gyandarshan/presentation/bloc/fetch_subcategory_bloc/fetch_subcategory_bloc.dart';
 import 'package:gyandarshan/presentation/screens/screen_contentpage/screen_contentpage.dart';
 import 'package:gyandarshan/widgets/custom_navigation.dart';
@@ -132,7 +133,7 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
-                          childAspectRatio: 1.0,
+                          childAspectRatio: .9,
                         ),
                     itemCount: state.subcategories.length,
                     itemBuilder: (context, index) {
@@ -181,12 +182,12 @@ class _ScreenSubcategorypageState extends State<ScreenSubcategorypage> {
                                     children: [
                                       Image.asset(
                                         'assets/images/6330-removebg-preview.png',
-                                        width: 90,
-                                        height: 90,
+                                        width: ResponsiveUtils.wp(25),
+                                        //height: 90,
                                         fit: BoxFit.contain,
                                       ),
 
-                                      ResponsiveSizedBox.height10,
+                                      ResponsiveSizedBox.height5,
 
                                       // Title
                                       Text(
